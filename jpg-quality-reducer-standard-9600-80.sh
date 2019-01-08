@@ -91,6 +91,16 @@ EOF
 
 
 if [[ ! -f reduced_quality.txt ]]; then
+    files_exist=0
+    for f in *.[Jj][Pp]*[Gg]
+    do
+        files_exist=1
+        break
+    done
+    if (( files_exist == 0 )) ; then
+        echo "No action - no pictures."
+        exit 0
+    fi
     mkdir backup_before_reducing_quality;
     cp -lR -- *.[Jj][Pp]*[Gg] backup_before_reducing_quality/
     echo "Resized (if larger than $resolution) and quality reduced using the following command and the following quantization table, using $(convert --version | head -n 1 | sed 's/http.*//g')." > reduced_quality.txt; 

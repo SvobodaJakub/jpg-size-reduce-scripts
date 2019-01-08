@@ -4,6 +4,19 @@
 # run like this:
 # find . -type d -exec bash -c 'cd "$1" && pwd && bash /path/to/jpg-quality-reducer-script.sh' _ {} ';'
 
+
+# exit on empty variables
+set -u
+
+# exit on non-zero status
+set -e
+
+# if there are no jpg files, the glob in the for loop is null and the loop doesn't run
+# (otherwise it would go on creating crazy directories)
+shopt -s nullglob
+
+
+
 resolution="512x512"
 quality="45%"
 
@@ -78,6 +91,16 @@ EOF
 
 
 if [[ ! -f reduced_quality.txt ]]; then
+    files_exist=0
+    for f in *.[Jj][Pp]*[Gg]
+    do
+        files_exist=1
+        break
+    done
+    if (( files_exist == 0 )) ; then
+        echo "No action - no pictures."
+        exit 0
+    fi
     mkdir backup_before_reducing_quality;
     cp -lR -- *.[Jj][Pp]*[Gg] backup_before_reducing_quality/
     echo "Resized (if larger than $resolution) and quality reduced using the following command and the following quantization table, using $(convert --version | head -n 1 | sed 's/http.*//g')." > reduced_quality.txt; 
