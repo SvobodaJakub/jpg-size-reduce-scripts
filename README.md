@@ -38,19 +38,26 @@ percent saved: 6.0
 
 The `jpg-quality-reducer-*.sh` scripts do lossy compression on the files. I created each to serve my specific needs:
 
-* jpg-quality-reducer-hiquality-9600-90.sh - high-quality photos that made it to nearly to the final selection and I still want to keep them without noticeable loss (noticeable to me when comparing by switching between the original and compressed versions zoomed to 150%)
+* jpg-quality-reducer-hiquality - high-quality photos that made it to nearly to the final selection and I still want to keep them without noticeable loss (noticeable to me when comparing by switching between the original and compressed versions zoomed to 150%)
     * takes about 50% of the original size
-* jpg-quality-reducer-standard-6400-66.sh - photos that didn't make it to any of the selections and I might decide to throw them away a few years later; very little noticeable loss
+* jpg-quality-reducer-standard - photos that didn't make it to any of the selections and I might decide to throw them away a few years later; very little noticeable loss
     * takes about 40% of the original size
-* jpg-quality-reducer-lowquality-3200-35.sh - heavily compressed photos that are mostly ok when viewed on a laptop screen without zoom, for sharing informative-quality photos over email, and for hoarding informative-quality reference photos in mobile phone (when used as photo memos, e.g. of doctor's office hours, etc.)
+* jpg-quality-reducer-lowquality - heavily compressed photos that are mostly ok when viewed on a laptop screen without zoom, for sharing informative-quality photos over email, and for hoarding informative-quality reference photos in mobile phone (when used as photo memos, e.g. of doctor's office hours, etc.)
     * takes about 10%-30% of the original size
 * jpg-quality-reducer-strip-web-2048-85.sh - photos that look not too compressed on a laptop screen, but are not good for zooming; strips metadata
+* in the mozjpeg folder, there are alternative versions of the scripts that use the mozjpeg encoder
+    * jpg-quality-reducer-lowquality and jpg-quality-reducer-standard - similar filesize than using the scripts from the parent dir, but higher quality
+    * jpg-quality-reducer-lowquality-slightly-better - sth in between lowquality and standard, I found it useful just once
 
 The scripts use a quantization table from imagemagick forums.
 
+Note: The quality percentages mean nothing and are useless for comparisons, as the results depend both on the software (IM vs. mozjpeg) and the quantization tables (baseline vs mozjpeg MS-SSIM vs the one from IM's repo by Dr. Nicolas Robidoux).
 
 To recursively process directory structure starting with the current directory (**you will lose the originals!**):
 
 ```
 find . -type d -exec bash -c 'cd "$1" && pwd && bash /path/to/jpg-quality-reducer-script.sh' _ {} ';'
 ```
+
+It is worth trying to follow a lossy compression by the lossless optimization.
+
