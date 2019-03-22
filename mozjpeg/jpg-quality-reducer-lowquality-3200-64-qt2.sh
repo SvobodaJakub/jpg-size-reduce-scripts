@@ -23,7 +23,7 @@ shopt -s nullglob
 
 
 resolution="3200x3200"
-quality="66"
+quality="64"
 quanttable="2"
 
 # TODO skip files that are not larger than $resolution - https://unix.stackexchange.com/questions/38943/use-mogrify-to-resize-large-files-while-ignoring-small-ones
