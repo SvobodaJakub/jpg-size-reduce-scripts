@@ -49,7 +49,7 @@ if [[ ! -f reduced_quality.txt ]]; then
             echo ": file doesn't exist, skipping"
             continue
         fi
-        "$scriptdir"/mozjpeg/cjpeg -quality "$quality" -quant-table "$quanttable" -dct float "$f" > "$f".TMPMOZ
+        "$scriptdir"/mozjpeg/cjpeg-static -quality "$quality" -quant-table "$quanttable" -dct float "$f" > "$f".TMPMOZ
         cat "$f".TMPMOZ > "$f"
         rm -f "$f".TMPMOZ
         if [[ ! -s "${f}" ]]

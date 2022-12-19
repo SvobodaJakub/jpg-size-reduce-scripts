@@ -5,6 +5,7 @@
 # 170803
 # 180603
 # 190302
+# 210917
 
 scriptdir="$(dirname "$0")"
 # get absolute path
@@ -27,7 +28,7 @@ shopt -s nullglob
 # to run recursively,
 # find . -type d -exec bash -c 'cd "$1" && pwd && bash /path/to/jpegtran-batch-optimize.sh' _ {} ';'
 
-command -v "$scriptdir"/mozjpeg/jpegtran >/dev/null 2>&1 || { echo >&2 "jpegtran not installed, aborting."; exit 1; }
+command -v "$scriptdir"/mozjpeg/jpegtran-static >/dev/null 2>&1 || { echo >&2 "jpegtran not installed, aborting."; exit 1; }
 
 errors=0
 total_bytes_saved=$((0))
@@ -50,19 +51,24 @@ do
     total_bytes_orig=$(( total_bytes_orig + size_orig ))
     jpegtran_error=0
     mkdir "${f}-o"
-    "$scriptdir"/mozjpeg/jpegtran -copy all -perfect -optimize -outfile "${f}-o/${f}" "${f}" || jpegtran_error=1
+    "$scriptdir"/mozjpeg/jpegtran-static -copy all -perfect -optimize -outfile "${f}-o/${f}" "${f}" || jpegtran_error=1
     touch -r "${f}" "${f}-o/${f}" # preserve timestamp
     mkdir "${f}-op"
-    "$scriptdir"/mozjpeg/jpegtran -copy all -perfect -optimize -progressive -outfile "${f}-op/${f}" "${f}" || jpegtran_error=1
+    "$scriptdir"/mozjpeg/jpegtran-static -copy all -perfect -optimize -progressive -outfile "${f}-op/${f}" "${f}" || jpegtran_error=1
     touch -r "${f}" "${f}-op/${f}" # preserve timestamp
     mkdir "${f}-p"
-    "$scriptdir"/mozjpeg/jpegtran -copy all -perfect -progressive -outfile "${f}-p/${f}" "${f}" || jpegtran_error=1
+    "$scriptdir"/mozjpeg/jpegtran-static -copy all -perfect -progressive -outfile "${f}-p/${f}" "${f}" || jpegtran_error=1
     touch -r "${f}" "${f}-p/${f}" # preserve timestamp
     if (( jpegtran_error ))
     then
         echo "jpegtran exited with non-zero error code, please check the source file, skipping"
         errors=1
-        touch "${f}.jpegtran-batch-optimize.error"
+        rm -f "${f}-o/${f}" || true
+        rm -f "${f}-op/${f}" || true
+        rm -f "${f}-p/${f}" || true
+        rmdir "${f}-o" || true
+        rmdir "${f}-op" || true
+        rmdir "${f}-p" || true
     else
         size_o=$(wc -c < "${f}-o/${f}")
         size_op=$(wc -c < "${f}-op/${f}")
@@ -130,6 +136,5 @@ then
 fi
 if (( errors ))
 then
-    echo "There were errors. Run the following command to find where they occurred and check the files and their folders. The original faulty files were preserved and not overwritten so as not to lose additional data."
-    echo "find . -name '*.jpegtran-batch-optimize.error'"
+    echo "There were errors. The original faulty files were preserved and not overwritten so as not to lose additional data."
 fi

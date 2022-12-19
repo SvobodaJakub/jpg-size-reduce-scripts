@@ -23,7 +23,7 @@ shopt -s nullglob
 
 
 resolution="3200x3200"
-quality="64"
+quality="19"
 quanttable="2"
 
 # TODO skip files that are not larger than $resolution - https://unix.stackexchange.com/questions/38943/use-mogrify-to-resize-large-files-while-ignoring-small-ones
@@ -45,7 +45,7 @@ if [[ ! -f reduced_quality.txt ]]; then
     cp -lR -- *.[Jj][Pp]*[Gg] backup_before_reducing_quality/
     echo "Resized (if larger than $resolution) and quality reduced using the following command and the following quantization table, using $(convert --version | head -n 1 | sed 's/http.*//g')." > reduced_quality.txt; 
     cat "$0" >> reduced_quality.txt
-    nice -n 16 mogrify -define jpeg:dct-method=float -quality "100" -resize "${resolution}"\> -filter Lanczos -interlace Plane -- *.[Jj][Pp]*[Gg] ;
+    nice -n 16 mogrify -define jpeg:dct-method=float -quality "100" -resize "${resolution}"\> -filter Lanczos -auto-orient -strip -interlace Plane -- *.[Jj][Pp]*[Gg] ;
     rm -f -- *.[Jj][Pp]*[Gg]~* ;
     for f in *.[Jj][Pp]*[Gg]
     do
@@ -55,7 +55,7 @@ if [[ ! -f reduced_quality.txt ]]; then
             echo ": file doesn't exist, skipping"
             continue
         fi
-        "$scriptdir"/mozjpeg/cjpeg-static -quality "$quality" -quant-table "$quanttable" -dct float "$f" > "$f".TMPMOZ
+        "$scriptdir"/mozjpeg/cjpeg-static -grayscale -quality "$quality" -quant-table "$quanttable" -dct float "$f" > "$f".TMPMOZ
         cat "$f".TMPMOZ > "$f"
         rm -f "$f".TMPMOZ
         if [[ ! -s "${f}" ]]

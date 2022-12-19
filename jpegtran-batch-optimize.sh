@@ -4,6 +4,7 @@
 # 170801
 # 170803
 # 180603
+# 210917
 
 # exit on empty variables
 set -u
@@ -57,7 +58,12 @@ do
     then
         echo "jpegtran exited with non-zero error code, please check the source file, skipping"
         errors=1
-        touch "${f}.jpegtran-batch-optimize.error"
+        rm -f "${f}-o/${f}" || true
+        rm -f "${f}-op/${f}" || true
+        rm -f "${f}-p/${f}" || true
+        rmdir "${f}-o" || true
+        rmdir "${f}-op" || true
+        rmdir "${f}-p" || true
     else
         size_o=$(wc -c < "${f}-o/${f}")
         size_op=$(wc -c < "${f}-op/${f}")
@@ -125,6 +131,5 @@ then
 fi
 if (( errors ))
 then
-    echo "There were errors. Run the following command to find where they occurred and check the files and their folders. The original faulty files were preserved and not overwritten so as not to lose additional data."
-    echo "find . -name '*.jpegtran-batch-optimize.error'"
+    echo "There were errors. The original faulty files were preserved and not overwritten so as not to lose additional data."
 fi

@@ -48,6 +48,7 @@ The `jpg-quality-reducer-*.sh` scripts do lossy compression on the files. I crea
 * in the mozjpeg folder, there are alternative versions of the scripts that use the mozjpeg encoder
     * jpg-quality-reducer-lowquality and jpg-quality-reducer-standard - similar filesize than using the scripts from the parent dir, but higher quality
     * jpg-quality-reducer-lowquality-slightly-better - sth in between lowquality and standard, I found it useful just once
+    * jpg-quality-reducer-lowquality-4800-adaptive - Heavily compressed photos that are mostly ok when viewed on a large screen without zoom. It uses an extremely rudimentary ad-hoc psychovisual model: Photos that contain mostly smooth gradients are compressed with higher quality than photos that contain mostly edges or noise, because I'm more sensitive to blockiness in gradients when that's the majority of the photo, than blockiness in small patches of gradients when the photo is mostly edges, and because I'm more sensitive to artifacts on edges when there's only a few of them (imagine a small sharp object in focus with large blurred background), than when the full photo is edges (imagine a forest). I use this to back up my photos on a low-capacity USB flash drive.
 
 The scripts use a quantization table from imagemagick forums.
 
